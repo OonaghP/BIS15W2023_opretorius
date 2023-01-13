@@ -155,22 +155,14 @@ all_harry_potter_matrix
 ## Practice
 1. What are the total earnings for the US and non-US regions?  
 ```{r}
-<<<<<<< HEAD
-
-=======
 TotEarn <- colSums(all_harry_potter_matrix)
 TotEarn
->>>>>>> 21f4e094e7a9acf4275ee716ba9536d2d0b6a194
 ```
 
 2. Add this information to the data matrix. Hint: you are adding a row, not a column.  
 ```{r}
-<<<<<<< HEAD
-
-=======
 all_harry_potter_matrix2 <- rbind(all_harry_potter_matrix, TotEarn)
 all_harry_potter_matrix2
->>>>>>> 21f4e094e7a9acf4275ee716ba9536d2d0b6a194
 ```
 
 ## A few Extras
