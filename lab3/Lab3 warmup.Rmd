@@ -1,0 +1,59 @@
+---
+title: "Lab3 warmup"
+output: html_document
+date: "2023-01-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Plant height
+```{r}
+plant_height <- c(30.7, 37.6, 28.4,NA, 33.2)
+```
+
+Plant weight
+```{r}
+plant_weight <- c(4, 5.2, 3.7, NA, 4.6)
+```
+
+Labels for matrix
+```{r}
+plant <- c("plant 1", "plant 2", "plant 3", "plant 4", "plant 5")
+measurements <- c("height", "weight")
+```
+
+```{r}
+plant_matrix <- c(plant_height, plant_weight) 
+```
+
+```{r}
+plant_matrix_final = matrix(plant_matrix, nrow = 5, byrow = FALSE) #FALSE will organise the data by column
+plant_matrix_final
+```
+
+Name the columns and rows
+```{r}
+colnames(plant_matrix_final) <- measurements
+rownames(plant_matrix_final) <- plant
+```
+
+Print the final matrix
+```{r}
+plant_matrix_final
+```
+
+Calculate the column means
+```{r}
+#remove the NAs
+plant_means <-colMeans(plant_matrix_final, na.rm = T)
+plant_means
+```
+
+Add this column to the matrix and print the final version
+```{r}
+plant_matrix_complete <- rbind(plant_matrix_final, plant_means)
+plant_matrix_complete
+```
+
