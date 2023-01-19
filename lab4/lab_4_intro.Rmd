@@ -21,7 +21,11 @@ library("jpeg")
 ### *With a partner, discuss the following questions*
 1. How is a data frame and how is it different than a data matrix?  
 2. What is the command we use to import .csv files into R?  
+#readr::read_csv() - check
+# readr:: just specifies that the file should be read using the readr package. 
 3. Take a moment to show your repository on GitHub to a partner. Can you make any improvements?  
+#never post your phone number! Remember all info here is public.
+
 
 ## Warm-up
 1. In a new R Markdown document, load the tidyverse and a package called `palmerpenguins`.

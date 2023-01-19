@@ -1,0 +1,40 @@
+---
+title: "Lab4 warmup"
+output: html_document
+date: "2023-01-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+```
+
+1. In a new R Markdown document, load the tidyverse and a package called `palmerpenguins`.
+2. What are the dimensions of the dataset `penguins`?
+You do not need to assign penguins to an object unless you really want to see it in your environment.
+```{r}
+dim(penguins)
+```
+
+3. What are the names of the variables in the `penguins` dataset?
+```{r}
+names(penguins)
+```
+
+4. How many individuals were sampled on each island in the `penguins` dataset?
+# this does not work well for non-categorical variables
+```{r}
+table(penguins$island)
+```
+
+5. What is the mean body mass for all individuals in the `penguins` dataset?
+```{r}
+mean(penguins$body_mass_g, na.rm = TRUE)
+```
+```{r}
+View(penguins)
+```
