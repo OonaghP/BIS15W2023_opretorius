@@ -3,9 +3,9 @@ title: "Lab 4 Homework"
 author: "Please Add Your Name Here"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -31,23 +31,124 @@ Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 
 **1. Load the data into a new object called `homerange`.**
 
+```{r}
+homerange <-  readr::read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
+```
+
+
 **2. Explore the data. Show the dimensions, column names, classes for each variable, and a statistical summary. Keep these as separate code chunks.**  
+
+```{r}
+dim(homerange)
+```
+```{r}
+names(homerange)
+```
+glimpse() allows us to see the class of each variable without specifying each variable separately.
+```{r}
+glimpse(homerange)
+```
+summary() also gives the classes
+```{r}
+summary(homerange)
+```
 
 **3. Change the class of the variables `taxon` and `order` to factors and display their levels.**  
 
+```{r}
+homerange$taxon <- as.factor(homerange$taxon)
+class(homerange$taxon)
+```
+
+```{r}
+levels(homerange$taxon)
+```
+```{r}
+homerange$order <- as.factor(homerange$order)
+class(homerange$order)
+```
+
+```{r}
+levels(homerange$order)
+```
+
 **4. What taxa are represented in the `homerange` data frame? Make a new data frame `taxa` that is restricted to taxon, common name, class, order, family, genus, species.**  
+
+```{r}
+levels(homerange$taxon)
+```
+```{r}
+taxa <- data.frame(select(homerange, c( "taxon", "common.name", "class", "order", "family", "genus", "species")))
+#taxa
+```
+
+or you could use select(homerange, taxon:species)
 
 **5. The variable `taxon` identifies the large, common name groups of the species represented in `homerange`. Make a table the shows the counts for each of these `taxon`.**  
 
+```{r}
+table(homerange$taxon)
+```
+
 **6. The species in `homerange` are also classified into trophic guilds. How many species are represented in each trophic guild.**  
+```{r}
+table(homerange$trophic.guild)
+```
 
 **7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
+```{r}
+carnivores <- data.frame(filter(homerange, trophic.guild == "carnivore"))
+#carnivores
+```
+
+```{r}
+herbivores <- data.frame(filter(homerange, trophic.guild == "herbivore"))
+#herbivores
+```
 
 **8. Do herbivores or carnivores have, on average, a larger `mean.hra.m2`? Remove any NAs from the data.**  
+```{r}
+anyNA(homerange$mean.hra.m2)
+```
+There are no NAs in this variable, but we include the "na.rm = TRUE" statement in case we did not know this.
+```{r}
+mean(herbivores$mean.hra.m2, na.rm = TRUE) > mean(carnivores$mean.hra.m2, na.rm = TRUE)
+```
+Herbivores, on average have the larger home range areas.
 
 **9. Make a new dataframe `deer` that is limited to the mean mass, log10 mass, family, genus, and species of deer in the database. The family for deer is cervidae. Arrange the data in descending order by log10 mass. Which is the largest deer? What is its common name?**  
 
+```{r}
+deer <-data.frame(select(homerange, c("mean.mass.g", "log10.mass", "family", "genus", "species")))
+deer <-data.frame(filter(deer, family == "cervidae"))
+deer
+```
+## Arrange data into descending order using desc()
+```{r}
+arrange(deer, desc(log10.mass))
+```
+According to the data, the largest deer is Alces alces. To find its common name, we will have to look it up on the full dataframe:
+```{r}
+filter(homerange, species == "alces")
+```
+Now we can see that this entry correlates to "moose".
+
 **10. As measured by the data, which snake species has the smallest homerange? Show all of your work, please. Look this species up online and tell me about it!** **Snake is found in taxon column**    
+
+```{r}
+snakes <- data.frame(filter(homerange, taxon == "snakes"))
+#snakes
+```
+
+```{r}
+arrange(snakes, desc(mean.hra.m2))
+```
+Now we can look at the last entry for the smallest home range, which belongs to the Namaqua Dwarf Adder which has a mean home range of only $200m^2$.
+
+### **Namaqua Dwarf Adder (*Bitis schneideri*)**
+Measuring only 15-20cm, this tiny snake is the world's smallest viper. Like me, it comes from southern Africa. It lives in the coastal dunes of Namaqualand (South Africa) and southern Namibia.  Days are spent hidden in the sand with only eyes exposed, both waiting for prey and avoiding predators. Feeding mainly on lizards and frogs, its venom is mildly cytotoxic. Human envenomation does not require antivenom administration.
+
+Reference: https://www.africansnakebiteinstitute.com/snake/namaqua-dwarf-adder/
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.   

@@ -34,6 +34,9 @@ fish <- readr::read_csv("data/Gaeta_etal_CLC_data.csv")
 ```{r}
 mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
 ```
+```{r}
+str(mammals)
+```
 
 To keep things tidy, I am going to rename the variables in the mammals data.  
 ```{r}
@@ -150,12 +153,32 @@ filter(mammals2, family == "Bovidae" & mass > 450000)
 
 6. From the `mammals` data, build a data frame that compares `mass`, `gestation`, and `newborn` among the primate genera `Lophocebus`, `Erythrocebus`, and `Macaca`. Among these genera, which species has the smallest `newborn` mass?
 ```{r}
+mammals3 <- data.frame(select(mammals, "genus", "species", "mass", "gestation", "newborn"))
+mammals3
+```
 
+
+## **QUESTION**
+R won't recognise "Erythrocebus" for some reason. I checked the class but it still didn't recognise it when changed to character or factor.
+```{r}
+mammals4 <- as.data.frame(filter(mammals3, genus == c("Lophocebus","Erythrocebus","Macaca")))
+mammals4
+```
+In the end I had to filter it seperately and then bind it to the dataframe.
+```{r}
+Erythrocebus <- data.frame(filter(mammals3, genus == "Erythrocebus"))
 ```
 
 ```{r}
-
+mammals5 <- rbind(mammals4, Erythrocebus)
+mammals5
 ```
+We can see from the dataframe that Macaca silenus has the smallest newborn mass, but we can also use which.min(), which tells us it is the 4th observation.
+```{r}
+which.min(mammals5$newborn)
+```
+
+
 
 ## Wrap-up  
 
