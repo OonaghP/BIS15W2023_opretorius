@@ -1,0 +1,15 @@
+---
+title: "BIS015 Cheatsheet"
+author: "Oonagh Pretorius"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Shortcuts**
+*Piping* shortcut:
+Windows = Shift + Ctrl + M
+Mac = Shift + Command + M

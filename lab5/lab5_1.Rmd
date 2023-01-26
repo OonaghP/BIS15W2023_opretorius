@@ -55,7 +55,8 @@ names(mammals)
 glimpse(mammals)
 ```
 
-If all of the characters should be factors, shift+command/control +M will give you pipes
+If all of the characters should be factors, 
+NOTE: shift+command/control +M will give you pipes
 ```{r}
 mammals %>% mutate_if(is.character, as.factor)
 glimpse(mammals) #shows that allthe characters were converted to factors.
