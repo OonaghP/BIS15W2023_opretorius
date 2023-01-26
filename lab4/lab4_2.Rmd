@@ -157,6 +157,11 @@ mammals3 <- data.frame(select(mammals, "genus", "species", "mass", "gestation", 
 mammals3
 ```
 
+```{r}
+mammals3 %>% 
+  filter(genus=="Erythrocebus" | genus=="Lophocebus" | genus=="Macaca")
+```
+
 
 ## **QUESTION**
 R won't recognise "Erythrocebus" for some reason. I checked the class but it still didn't recognise it when changed to character or factor.
