@@ -1,0 +1,70 @@
+---
+title: "Lab 6 Warm-up"
+author: "O Pretorius"
+date: "2023-01-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+```
+
+### Warm-up
+1. Open the data `ecs21351-sup-0003-SupplementS1.csv`
+```{r}
+ecosphere <- readr::read_csv("data/ecs21351-sup-0003-SupplementS1.csv")
+View(ecosphere)
+```
+Notice strange character in some cells e.g. "?"
+Multiple observations in same cell (Genus and species in same cell)
+
+2. Clean the names of the variables
+Looks weird because R tried to number the columns for you - unhelpful
+You want to start with row 2
+```{r}
+names(ecosphere)
+```
+
+add the skip arguement to skip first two row of data
+```{r}
+ecosphere <- readr::read_csv("data/ecs21351-sup-0003-SupplementS1.csv", skip =2)
+```
+
+```{r}
+names(ecosphere)
+```
+ 
+```{r}
+ecosphere <- janitor::clean_names(ecosphere)
+```
+OR
+```{r}
+#ecosphere %>% clean_names(ecosphere)
+```
+
+3. Explore the data using a function of your choice
+
+```{r}
+glimpse(ecosphere)
+```
+
+4. Are there more veggie, omni, insecivore, or nectar feeders in the data?
+
+```{r}
+ecosphere %>% 
+  tabyl(diet) %>% 
+  arrange(desc(n))
+```
+
+5. Which families are Veggie?
+```{r}
+ecosphere %>% 
+  filter(diet == "Vegetation") %>% 
+  select(family, diet) #%>% 
+  #tabyl(diet)
+```
+
+### tabyl can do strange things when data are converted to factors
+
