@@ -522,7 +522,7 @@ data.</p>
 ##  3rd Qu.:1.030   3rd Qu.:1.0140      3rd Qu.:    1.055  
 ##  Max.   :1.396   Max.   :1.3080      Max.   :18000.000  
 ## </code></pre>
-<p>**Problem 3. (2 points) How many distinct orders of birds are
+<p>Problem 3. (2 points) How many distinct orders of birds are
 represented in the data?</p>
 <pre class="r"><code>n_distinct(ecosphere$order)</code></pre>
 <pre><code>## [1] 19</code></pre>
@@ -620,25 +620,123 @@ exceptions, list the species below.</p>
 <p>Problem 8. (4 points) In ducks, how is mean body mass associated with
 migratory strategy? Do the ducks that migrate long distances have high
 or low average body mass?</p>
-<pre class="r"><code>#ducks %&gt;% </code></pre>
+<pre class="r"><code>ducks %&gt;% 
+  group_by(migratory_strategy) %&gt;% 
+  summarise(mean_log10_mass = mean(log10_mass, na.rm = TRUE))</code></pre>
+<pre><code>## # A tibble: 5 × 2
+##   migratory_strategy mean_log10_mass
+##   &lt;chr&gt;                        &lt;dbl&gt;
+## 1 Long                          2.87
+## 2 Moderate                      3.11
+## 3 Resident                      4.03
+## 4 Short                         2.98
+## 5 Withdrawal                    2.92</code></pre>
 <p>Problem 9. (2 points) Accipitridae is the family that includes
 eagles, hawks, kites, and osprey. First, make a new object
 <code>eagles</code> that only includes species in the family
 Accipitridae. Next, restrict these data to only include the variables
 common_name, scientific_name, and population_size.</p>
+<pre class="r"><code>eagles &lt;- ecosphere %&gt;% 
+  filter(family == &quot;Accipitridae&quot;) %&gt;% 
+  select(c(common_name, scientific_name, population_size))
+eagles</code></pre>
+<pre><code>## # A tibble: 20 × 3
+##    common_name         scientific_name          population_size
+##    &lt;chr&gt;               &lt;chr&gt;                              &lt;dbl&gt;
+##  1 Bald Eagle          Haliaeetus leucocephalus              NA
+##  2 Broad-winged Hawk   Buteo platypterus                1700000
+##  3 Cooper&#39;s Hawk       Accipiter cooperii                700000
+##  4 Ferruginous Hawk    Buteo regalis                      80000
+##  5 Golden Eagle        Aquila chrysaetos                 130000
+##  6 Gray Hawk           Buteo nitidus                         NA
+##  7 Harris&#39;s Hawk       Parabuteo unicinctus               50000
+##  8 Hook-billed Kite    Chondrohierax uncinatus               NA
+##  9 Northern Goshawk    Accipiter gentilis                200000
+## 10 Northern Harrier    Circus cyaneus                    700000
+## 11 Red-shouldered Hawk Buteo lineatus                   1100000
+## 12 Red-tailed Hawk     Buteo jamaicensis                2000000
+## 13 Rough-legged Hawk   Buteo lagopus                     300000
+## 14 Sharp-shinned Hawk  Accipiter striatus                500000
+## 15 Short-tailed Hawk   Buteo brachyurus                      NA
+## 16 Snail Kite          Rostrhamus sociabilis                 NA
+## 17 Swainson&#39;s Hawk     Buteo swainsoni                   540000
+## 18 White-tailed Hawk   Buteo albicaudatus                    NA
+## 19 White-tailed Kite   Elanus leucurus                       NA
+## 20 Zone-tailed Hawk    Buteo albonotatus                     NA</code></pre>
 <p>Problem 10. (4 points) In the eagles data, any species with a
 population size less than 250,000 individuals is threatened. Make a new
 column <code>conservation_status</code> that shows whether or not a
 species is threatened.</p>
+<pre class="r"><code>eagles %&gt;% 
+  mutate(conservation_status = ifelse(population_size &lt; 250000, &quot;threatened&quot;, &quot;not threatened&quot;))%&gt;%
+  arrange(population_size)</code></pre>
+<pre><code>## # A tibble: 20 × 4
+##    common_name         scientific_name          population_size conservation_s…¹
+##    &lt;chr&gt;               &lt;chr&gt;                              &lt;dbl&gt; &lt;chr&gt;           
+##  1 Harris&#39;s Hawk       Parabuteo unicinctus               50000 threatened      
+##  2 Ferruginous Hawk    Buteo regalis                      80000 threatened      
+##  3 Golden Eagle        Aquila chrysaetos                 130000 threatened      
+##  4 Northern Goshawk    Accipiter gentilis                200000 threatened      
+##  5 Rough-legged Hawk   Buteo lagopus                     300000 not threatened  
+##  6 Sharp-shinned Hawk  Accipiter striatus                500000 not threatened  
+##  7 Swainson&#39;s Hawk     Buteo swainsoni                   540000 not threatened  
+##  8 Cooper&#39;s Hawk       Accipiter cooperii                700000 not threatened  
+##  9 Northern Harrier    Circus cyaneus                    700000 not threatened  
+## 10 Red-shouldered Hawk Buteo lineatus                   1100000 not threatened  
+## 11 Broad-winged Hawk   Buteo platypterus                1700000 not threatened  
+## 12 Red-tailed Hawk     Buteo jamaicensis                2000000 not threatened  
+## 13 Bald Eagle          Haliaeetus leucocephalus              NA &lt;NA&gt;            
+## 14 Gray Hawk           Buteo nitidus                         NA &lt;NA&gt;            
+## 15 Hook-billed Kite    Chondrohierax uncinatus               NA &lt;NA&gt;            
+## 16 Short-tailed Hawk   Buteo brachyurus                      NA &lt;NA&gt;            
+## 17 Snail Kite          Rostrhamus sociabilis                 NA &lt;NA&gt;            
+## 18 White-tailed Hawk   Buteo albicaudatus                    NA &lt;NA&gt;            
+## 19 White-tailed Kite   Elanus leucurus                       NA &lt;NA&gt;            
+## 20 Zone-tailed Hawk    Buteo albonotatus                     NA &lt;NA&gt;            
+## # … with abbreviated variable name ¹​conservation_status</code></pre>
 <p>Problem 11. (2 points) Consider the results from questions 9 and 10.
 Are there any species for which their threatened status needs further
 study? How do you know?</p>
+<pre class="r"><code>eagles %&gt;% 
+  filter(is.na(population_size))</code></pre>
+<pre><code>## # A tibble: 8 × 3
+##   common_name       scientific_name          population_size
+##   &lt;chr&gt;             &lt;chr&gt;                              &lt;dbl&gt;
+## 1 Bald Eagle        Haliaeetus leucocephalus              NA
+## 2 Gray Hawk         Buteo nitidus                         NA
+## 3 Hook-billed Kite  Chondrohierax uncinatus               NA
+## 4 Short-tailed Hawk Buteo brachyurus                      NA
+## 5 Snail Kite        Rostrhamus sociabilis                 NA
+## 6 White-tailed Hawk Buteo albicaudatus                    NA
+## 7 White-tailed Kite Elanus leucurus                       NA
+## 8 Zone-tailed Hawk  Buteo albonotatus                     NA</code></pre>
+<p>These species should be studies further as there is insufficient
+information available.</p>
 <p>Problem 12. (4 points) Use the <code>ecosphere</code> data to perform
 one exploratory analysis of your choice. The analysis must have a
 minimum of three lines and two functions. You must also clearly state
-the question you are attempting to answer.</p>
+the question you are attempting to answer. Question: I am interested
+whether passerine birds can travel further depending on what they eat.
+What are the mean, minimum and maximum winter range areas between all
+the different diet types and how many fall into each diet category?</p>
+<pre class="r"><code>ecosphere %&gt;% 
+  filter(order == &quot;Passeriformes&quot;) %&gt;% 
+  group_by(diet) %&gt;% 
+  summarise(min_range = min(winter_range_area), 
+            max_range = max(winter_range_area), 
+            mean_range = mean(winter_range_area),
+            total=n())</code></pre>
+<pre><code>## # A tibble: 5 × 5
+##   diet          min_range max_range mean_range total
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;
+## 1 Fruit            173490  11021363   4630099.     6
+## 2 Invertebrates    108584  21039688   2981338.   111
+## 3 Omnivore            193  15172222   3159433.    77
+## 4 Seed                 11  23373085   5160455.    42
+## 5 Vertebrates     7482153   7482153   7482153      1</code></pre>
 <p>Please provide the names of the students you have worked with with
 during the exam:</p>
+<pre class="r"><code>#Bao Nguyen</code></pre>
 <p>Please be 100% sure your exam is saved, knitted, and pushed to your
 github repository. No need to submit a link on canvas, we will find your
 exam in your repository.</p>

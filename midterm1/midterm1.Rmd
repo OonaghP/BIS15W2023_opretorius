@@ -47,7 +47,7 @@ glimpse(ecosphere)
 summary(ecosphere)
 ```
 
-**Problem 3. (2 points) How many distinct orders of birds are represented in the data?
+Problem 3. (2 points) How many distinct orders of birds are represented in the data?
 ```{r}
 n_distinct(ecosphere$order)
 ```
@@ -95,33 +95,48 @@ ducks %>%
 
 Problem 8. (4 points) In ducks, how is mean body mass associated with migratory strategy? Do the ducks that migrate long distances have high or low average body mass?
 ```{r}
-#ducks %>% 
-  
+ducks %>% 
+  group_by(migratory_strategy) %>% 
+  summarise(mean_log10_mass = mean(log10_mass, na.rm = TRUE))
 ```
 
 Problem 9. (2 points) Accipitridae is the family that includes eagles, hawks, kites, and osprey. First, make a new object `eagles` that only includes species in the family Accipitridae. Next, restrict these data to only include the variables common_name, scientific_name, and population_size.
 ```{r}
-
+eagles <- ecosphere %>% 
+  filter(family == "Accipitridae") %>% 
+  select(c(common_name, scientific_name, population_size))
+eagles
 ```
 
 Problem 10. (4 points) In the eagles data, any species with a population size less than 250,000 individuals is threatened. Make a new column `conservation_status` that shows whether or not a species is threatened.
 ```{r}
-
+eagles %>% 
+  mutate(conservation_status = ifelse(population_size < 250000, "threatened", "not threatened"))%>%
+  arrange(population_size)
 ```
 
 Problem 11. (2 points) Consider the results from questions 9 and 10. Are there any species for which their threatened status needs further study? How do you know?
 ```{r}
-
+eagles %>% 
+  filter(is.na(population_size))
 ```
+These species should be studies further as there is insufficient information available.
 
 Problem 12. (4 points) Use the `ecosphere` data to perform one exploratory analysis of your choice. The analysis must have a minimum of three lines and two functions. You must also clearly state the question you are attempting to answer.
+Question: I am interested whether passerine birds can travel further depending on what they eat. What are the mean, minimum and maximum winter range areas between all the different diet types and how many fall into each diet category?
 ```{r}
-
+ecosphere %>% 
+  filter(order == "Passeriformes") %>% 
+  group_by(diet) %>% 
+  summarise(min_range = min(winter_range_area), 
+            max_range = max(winter_range_area), 
+            mean_range = mean(winter_range_area),
+            total=n())
 ```
 
 Please provide the names of the students you have worked with with during the exam:
 ```{r}
-
+#Bao Nguyen
 ```
 
 Please be 100% sure your exam is saved, knitted, and pushed to your github repository. No need to submit a link on canvas, we will find your exam in your repository.

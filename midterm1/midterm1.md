@@ -164,7 +164,7 @@ summary(ecosphere)
 ## 
 ```
 
-**Problem 3. (2 points) How many distinct orders of birds are represented in the data?
+Problem 3. (2 points) How many distinct orders of birds are represented in the data?
 
 ```r
 n_distinct(ecosphere$order)
@@ -299,22 +299,142 @@ ducks %>%
 Problem 8. (4 points) In ducks, how is mean body mass associated with migratory strategy? Do the ducks that migrate long distances have high or low average body mass?
 
 ```r
-#ducks %>% 
+ducks %>% 
+  group_by(migratory_strategy) %>% 
+  summarise(mean_log10_mass = mean(log10_mass, na.rm = TRUE))
+```
+
+```
+## # A tibble: 5 × 2
+##   migratory_strategy mean_log10_mass
+##   <chr>                        <dbl>
+## 1 Long                          2.87
+## 2 Moderate                      3.11
+## 3 Resident                      4.03
+## 4 Short                         2.98
+## 5 Withdrawal                    2.92
 ```
 
 Problem 9. (2 points) Accipitridae is the family that includes eagles, hawks, kites, and osprey. First, make a new object `eagles` that only includes species in the family Accipitridae. Next, restrict these data to only include the variables common_name, scientific_name, and population_size.
 
+```r
+eagles <- ecosphere %>% 
+  filter(family == "Accipitridae") %>% 
+  select(c(common_name, scientific_name, population_size))
+eagles
+```
+
+```
+## # A tibble: 20 × 3
+##    common_name         scientific_name          population_size
+##    <chr>               <chr>                              <dbl>
+##  1 Bald Eagle          Haliaeetus leucocephalus              NA
+##  2 Broad-winged Hawk   Buteo platypterus                1700000
+##  3 Cooper's Hawk       Accipiter cooperii                700000
+##  4 Ferruginous Hawk    Buteo regalis                      80000
+##  5 Golden Eagle        Aquila chrysaetos                 130000
+##  6 Gray Hawk           Buteo nitidus                         NA
+##  7 Harris's Hawk       Parabuteo unicinctus               50000
+##  8 Hook-billed Kite    Chondrohierax uncinatus               NA
+##  9 Northern Goshawk    Accipiter gentilis                200000
+## 10 Northern Harrier    Circus cyaneus                    700000
+## 11 Red-shouldered Hawk Buteo lineatus                   1100000
+## 12 Red-tailed Hawk     Buteo jamaicensis                2000000
+## 13 Rough-legged Hawk   Buteo lagopus                     300000
+## 14 Sharp-shinned Hawk  Accipiter striatus                500000
+## 15 Short-tailed Hawk   Buteo brachyurus                      NA
+## 16 Snail Kite          Rostrhamus sociabilis                 NA
+## 17 Swainson's Hawk     Buteo swainsoni                   540000
+## 18 White-tailed Hawk   Buteo albicaudatus                    NA
+## 19 White-tailed Kite   Elanus leucurus                       NA
+## 20 Zone-tailed Hawk    Buteo albonotatus                     NA
+```
 
 Problem 10. (4 points) In the eagles data, any species with a population size less than 250,000 individuals is threatened. Make a new column `conservation_status` that shows whether or not a species is threatened.
 
+```r
+eagles %>% 
+  mutate(conservation_status = ifelse(population_size < 250000, "threatened", "not threatened"))%>%
+  arrange(population_size)
+```
+
+```
+## # A tibble: 20 × 4
+##    common_name         scientific_name          population_size conservation_s…¹
+##    <chr>               <chr>                              <dbl> <chr>           
+##  1 Harris's Hawk       Parabuteo unicinctus               50000 threatened      
+##  2 Ferruginous Hawk    Buteo regalis                      80000 threatened      
+##  3 Golden Eagle        Aquila chrysaetos                 130000 threatened      
+##  4 Northern Goshawk    Accipiter gentilis                200000 threatened      
+##  5 Rough-legged Hawk   Buteo lagopus                     300000 not threatened  
+##  6 Sharp-shinned Hawk  Accipiter striatus                500000 not threatened  
+##  7 Swainson's Hawk     Buteo swainsoni                   540000 not threatened  
+##  8 Cooper's Hawk       Accipiter cooperii                700000 not threatened  
+##  9 Northern Harrier    Circus cyaneus                    700000 not threatened  
+## 10 Red-shouldered Hawk Buteo lineatus                   1100000 not threatened  
+## 11 Broad-winged Hawk   Buteo platypterus                1700000 not threatened  
+## 12 Red-tailed Hawk     Buteo jamaicensis                2000000 not threatened  
+## 13 Bald Eagle          Haliaeetus leucocephalus              NA <NA>            
+## 14 Gray Hawk           Buteo nitidus                         NA <NA>            
+## 15 Hook-billed Kite    Chondrohierax uncinatus               NA <NA>            
+## 16 Short-tailed Hawk   Buteo brachyurus                      NA <NA>            
+## 17 Snail Kite          Rostrhamus sociabilis                 NA <NA>            
+## 18 White-tailed Hawk   Buteo albicaudatus                    NA <NA>            
+## 19 White-tailed Kite   Elanus leucurus                       NA <NA>            
+## 20 Zone-tailed Hawk    Buteo albonotatus                     NA <NA>            
+## # … with abbreviated variable name ¹​conservation_status
+```
 
 Problem 11. (2 points) Consider the results from questions 9 and 10. Are there any species for which their threatened status needs further study? How do you know?
 
+```r
+eagles %>% 
+  filter(is.na(population_size))
+```
+
+```
+## # A tibble: 8 × 3
+##   common_name       scientific_name          population_size
+##   <chr>             <chr>                              <dbl>
+## 1 Bald Eagle        Haliaeetus leucocephalus              NA
+## 2 Gray Hawk         Buteo nitidus                         NA
+## 3 Hook-billed Kite  Chondrohierax uncinatus               NA
+## 4 Short-tailed Hawk Buteo brachyurus                      NA
+## 5 Snail Kite        Rostrhamus sociabilis                 NA
+## 6 White-tailed Hawk Buteo albicaudatus                    NA
+## 7 White-tailed Kite Elanus leucurus                       NA
+## 8 Zone-tailed Hawk  Buteo albonotatus                     NA
+```
+These species should be studies further as there is insufficient information available.
 
 Problem 12. (4 points) Use the `ecosphere` data to perform one exploratory analysis of your choice. The analysis must have a minimum of three lines and two functions. You must also clearly state the question you are attempting to answer.
+Question: I am interested whether passerine birds can travel further depending on what they eat. What are the mean, minimum and maximum winter range areas between all the different diet types and how many fall into each diet category?
 
+```r
+ecosphere %>% 
+  filter(order == "Passeriformes") %>% 
+  group_by(diet) %>% 
+  summarise(min_range = min(winter_range_area), 
+            max_range = max(winter_range_area), 
+            mean_range = mean(winter_range_area),
+            total=n())
+```
+
+```
+## # A tibble: 5 × 5
+##   diet          min_range max_range mean_range total
+##   <chr>             <dbl>     <dbl>      <dbl> <int>
+## 1 Fruit            173490  11021363   4630099.     6
+## 2 Invertebrates    108584  21039688   2981338.   111
+## 3 Omnivore            193  15172222   3159433.    77
+## 4 Seed                 11  23373085   5160455.    42
+## 5 Vertebrates     7482153   7482153   7482153      1
+```
 
 Please provide the names of the students you have worked with with during the exam:
 
+```r
+#Bao Nguyen
+```
 
 Please be 100% sure your exam is saved, knitted, and pushed to your github repository. No need to submit a link on canvas, we will find your exam in your repository.
