@@ -13,3 +13,134 @@ knitr::opts_chunk$set(echo = TRUE)
 *Piping* shortcut:
 Windows = Shift + Ctrl + M
 Mac = Shift + Command + M
+
+Packages to load:
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+library("skimr")
+```
+
+### Loading a dataset:
+CSV:
+```{r}
+mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
+superhero_info <- readr::read_csv("data/heroes_information.csv", na = c("", "-99", "-")) # only remove the NAs here if you know the dataset!
+```
+
+Other:
+
+Check the structure of your data & class of variables:
+
+```{r}
+glimpse()
+head()
+summary()
+```
+
+**Renaming variables**
+1. Manually:
+```{r}
+mammals <- rename(mammals, genus="Genus", wean_mass="wean mass", max_life= "max. life", litter_size="litter size", litters_per_year="litters/year")
+```
+```{r}
+names(mammals)
+```
+OR
+```{r}
+superhero_id <- 
+  rename(superhero_info,gender = "Gender",
+         eye_color = "Eye color", 
+         race = "Race", 
+         hair_color = "Hair color", 
+         height = "Height", 
+         publisher = "Publisher", 
+         skin_color = "Skin color", 
+         alignment = "Alignment", 
+         weight = "Weight" )
+superhero_id
+```
+
+
+2. Cleaning with janitor:
+```{r}
+superhero_powers <- janitor::clean_names(superhero_powers)
+```
+
+**Changing classes**
+```{r}
+mammals %>% mutate_if(is.character, as.factor)
+glimpse(mammals) #shows that all the characters were converted to factors.
+```
+
+
+## **Functions**
+
+#### **select()** for columns **filter()** for observations
+```{r}
+fish %>%
+  select(lakeid, scalelength) %>%
+  filter(lakeid == "AL")
+```
+
+#### **mean()**
+```{r}
+mean(elephants$age)
+```
+
+#### **arrange()**
+```{r}
+fish %>% 
+  select(lakeid, length, fish_id, scalelength) %>% 
+  filter(lakeid=="AL") %>% 
+  arrange(fish_id) # default is ascending order. can do descending:  arrange(desc(fish_id))
+```
+
+#### **mutate()** adds new columns. can even specify
+```{r}
+mammals %>% 
+  select(genus, species, newborn) %>%
+  mutate(newborn_new = ifelse(newborn == -999.00, NA, newborn))%>%
+  arrange(newborn)
+```
+
+Using the **across** function we can specify individual **columns** in which to change the observations.
+across() makes it easy to apply the same transformation to multiple columns, allowing you to use select() semantics inside in "data-masking" functions like summarise() and mutate()
+```{r}
+mammals %>% 
+  mutate(across(c("order", "family"), tolower))
+```
+
+#### **tabyl()**
+```{r}
+superhero_info <- janitor::clean_names(superhero_info)
+tabyl(superhero_info, alignment)
+```
+
+#### **group_by()**
+#### **`summarize()`**
+`summarize()` will produce summary statistics for a given variable in a data frame
+Example:
+```{r}
+elephants %>% 
+  group_by(sex) %>% 
+  summarise(mean_age = mean(age), mean_height = mean(height, na.rm = TRUE))
+```
+
+Asking for min, max, mean, n in summarise():
+```{r}
+elephants %>% 
+  filter(age > 20) %>% 
+  group_by(sex) %>% 
+  summarise(min_height = min(height), 
+            max_height = max(height), 
+            mean_height = mean(height),
+            total=n())
+```
+
+Extracting specific values:
+```{r}
+superhero_powers %>% 
+  filter(hero_names == "Angel") %>%
+  select_if(all_vars(.=="TRUE"))
+```
