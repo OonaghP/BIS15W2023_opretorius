@@ -47,7 +47,11 @@ penguins %>%
   summarize(mean_body_mass = mean(body_mass_g, na.rm = TRUE))
 ```
 
-
+```{r}
+penguins %>% 
+  filter(is.na(body_mass_g))
+```
+Gentoo and Adelie penguins are missing data for body mass.
 
 Well, that won't work so let's remove the NAs and recalculate.
 ```{r}
@@ -58,12 +62,11 @@ penguins %>%
 ```
 
 What if we are interested in the number of observations (penguins) by species and island?
-```{r}
-names(penguins)
-```
 
 ```{r}
-
+penguins %>% 
+  group_by(island) %>% 
+  count(species)
 ```
 
 ## **Counts** NB
@@ -108,17 +111,27 @@ penguins %>%
 ## Practice
 1. Produce a summary of the mean for bill_length_mm, bill_depth_mm, flipper_length_mm, and body_mass_g within Adelie penguins only. Be sure to provide the number of samples.
 ```{r}
-
+penguins %>% 
+  filter(species == "Adelie") %>% 
+  summarise(mean_bill_length = mean (bill_length_mm, na.rm = TRUE),
+            mean_bill_depth = mean(bill_depth_mm, na.rm = TRUE),
+            mean_flipper_length = mean(flipper_length_mm, na.rm = TRUE),
+            mean_body_mass = mean(body_mass_g, na.rm = TRUE),
+            total=n())
 ```
 
 2. How does the mean of `bill_length_mm` compare between penguin species?
 ```{r}
-
+penguins %>% 
+  group_by(species) %>% 
+  summarise(mean_bill_length = mean (bill_length_mm, na.rm = TRUE))
 ```
 
 3. For some penguins, their sex is listed as NA. Where do these penguins occur?
 ```{r}
-
+penguins %>% 
+  filter(is.na(sex)) %>% 
+  tabyl(island) #or use count(island)
 ```
 
 ## `across()`
@@ -175,10 +188,22 @@ penguins %>%
 ```
 
 ## Practice
-1. Produce separate summaries of the mean and standard deviation for bill_length_mm, bill_depth_mm, and flipper_length_mm for each penguin species. Be sure to provide the number of samples.  
-mean
-```{r}
+1. Produce separate summaries of the mean and standard deviation for bill_length_mm, bill_depth_mm, and flipper_length_mm for each penguin species. Be sure to provide the number of samples.
 
+Mean
+```{r}
+penguins %>% 
+  group_by(species) %>%
+  summarise(across(c(bill_length_mm, bill_depth_mm, flipper_length_mm),
+                    mean, na.rm=T), total=n())
+```
+
+SD
+```{r}
+penguins %>% 
+  group_by(species) %>%
+  summarise(across(c(bill_length_mm, bill_depth_mm, flipper_length_mm),
+                    sd, na.rm=T), total=n())
 ```
 
 ## Wrap-up  
