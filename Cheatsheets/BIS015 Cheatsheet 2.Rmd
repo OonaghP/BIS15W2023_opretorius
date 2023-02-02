@@ -1,0 +1,273 @@
+---
+title: "BIS015 Cheatsheet"
+author: "Oonagh Pretorius"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **Shortcuts**
+*Piping* shortcut:
+Windows = Shift + Ctrl + M
+Mac = Shift + Command + M
+
+Packages to load:
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+library("skimr")
+```
+
+### Loading a dataset:
+CSV:
+```{r}
+mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
+superhero_info <- readr::read_csv("data/heroes_information.csv", na = c("", "-99", "-")) # only remove the NAs here if you know the dataset!
+```
+
+Sometimes you need to check for footers etc and remove those:
+```{r message=FALSE, warning=FALSE}
+ecosphere <- read_csv("data/ecs21351-sup-0003-SupplementS1.csv", skip=2) %>% 
+  clean_names() %>%
+  slice(1:(n() - 18)) # this removes the footer
+```
+
+Check the structure of your data & class of variables:
+
+```{r}
+glimpse()
+head()
+summary()
+```
+
+To simply ask if there are any NAs at all, we can use any(is.na(x)) 
+
+```{r}
+any(is.na(sleep))
+```
+## Are there any NA's?  
+The `summary()` function in base R will tally NA's by variable, but only for categorical/factor, numeric, integer, or logical columns. What about any NA values in the character columns?
+```{r}
+summary(msleep)
+```
+
+```{r}
+msleep %>% 
+  count(conservation, sort = TRUE) #gives tally of all NAs that R can see
+```
+### **Replacing tings with NA**
+This can be very dangerous if you don't know the data well.
+```{r}
+amniota_tidy <- amniota %>% 
+  na_if("-999")
+```
+
+**Renaming variables**
+1. Manually:
+```{r}
+mammals <- rename(mammals, genus="Genus", wean_mass="wean mass", max_life= "max. life", litter_size="litter size", litters_per_year="litters/year")
+```
+```{r}
+names(mammals)
+```
+OR
+```{r}
+superhero_id <- 
+  rename(superhero_info,gender = "Gender",
+         eye_color = "Eye color", 
+         race = "Race", 
+         hair_color = "Hair color", 
+         height = "Height", 
+         publisher = "Publisher", 
+         skin_color = "Skin color", 
+         alignment = "Alignment", 
+         weight = "Weight" )
+superhero_id
+```
+
+
+2. Cleaning with janitor:
+```{r}
+superhero_powers <- janitor::clean_names(superhero_powers)
+```
+
+**Changing classes**
+```{r}
+mammals %>% mutate_if(is.character, as.factor)
+glimpse(mammals) #shows that all the characters were converted to factors.
+```
+
+
+## **Functions**
+
+#### **select()** for columns **filter()** for observations
+```{r}
+fish %>%
+  select(lakeid, scalelength) %>%
+  filter(lakeid == "AL")
+```
+
+#### **n_distinct**
+```{r}
+penguins %>%
+  summarize(distinct_species = n_distinct(species),
+            distinct_island = n_distinct(island),
+            distinct_sex = n_distinct(sex))
+```
+
+#### **mean()**
+```{r}
+mean(elephants$age)
+```
+
+#### **arrange()**
+```{r}
+fish %>% 
+  select(lakeid, length, fish_id, scalelength) %>% 
+  filter(lakeid=="AL") %>% 
+  arrange(fish_id) # default is ascending order. can do descending:  arrange(desc(fish_id))
+```
+
+#### **mutate()** adds new columns. can even specify
+```{r}
+mammals %>% 
+  select(genus, species, newborn) %>%
+  mutate(newborn_new = ifelse(newborn == -999.00, NA, newborn))%>%
+  arrange(newborn)
+```
+
+Using the **across** function we can specify individual **columns** in which to change the observations.
+across() makes it easy to apply the same transformation to multiple columns, allowing you to use select() semantics inside in "data-masking" functions like summarise() and mutate()
+`across()` uses `filter()` and `select()` across multiple variables. 
+```{r}
+mammals %>% 
+  mutate(across(c("order", "family"), tolower)) # change to lower case
+```
+Categorical:
+```{r}
+penguins %>%
+  summarize(across(c(species, island, sex), n_distinct))
+```
+
+Continuous:
+```{r}
+penguins %>%
+  group_by(sex) %>% 
+  summarize(across(contains("mm"), mean, na.rm=T))
+```
+
+
+
+#### **tabyl()**
+```{r}
+superhero_info <- janitor::clean_names(superhero_info)
+tabyl(superhero_info, alignment)
+```
+
+#### **group_by()**
+
+```{r}
+penguins %>% 
+  group_by(island, species) %>% #ID two categorical variables to group by
+  summarize(n_penguins=n(), .groups = 'keep') # if you don't put the .groups= "keep" it will gove you a small error. Remember for later when it becomes NB
+```
+
+#### **`summarize()`**
+`summarize()` will produce summary statistics for a given variable in a data frame
+Example:
+```{r}
+elephants %>% 
+  group_by(sex) %>% 
+  summarise(mean_age = mean(age), mean_height = mean(height, na.rm = TRUE))
+```
+
+Asking for min, max, mean, n in summarise():
+```{r}
+elephants %>% 
+  filter(age > 20) %>% 
+  group_by(sex) %>% 
+  summarise(min_height = min(height), 
+            max_height = max(height), 
+            mean_height = mean(height),
+            total=n())
+```
+
+Summarize across all continuous variables:
+```{r}
+penguins %>%
+  summarise_all(mean, na.rm=T)
+```
+
+#### **Extracting specific values**
+```{r}
+superhero_powers %>% 
+  filter(hero_names == "Angel") %>%
+  select_if(all_vars(.=="TRUE"))
+```
+
+#### **count()**
+`count()` is an easy way of determining how many observations you have within a column. It acts like a combination of `group_by()` and `n()`.
+```{r}
+penguins %>% 
+  count(island, sort = T) #sort=T sorts the column in descending order
+```
+
+Tabyl has nicer output for counts
+```{r}
+penguins %>% 
+  tabyl(island, species)
+```
+
+```{r}
+penguins %>% 
+  tabyl(species, island) %>% 
+  adorn_percentages() %>%
+  adorn_pct_formatting(digits = 2)
+```
+
+```{r}
+penguins %>% 
+  group_by(species) %>%
+  summarise(across(c(bill_length_mm, bill_depth_mm, flipper_length_mm),
+                    mean, na.rm=T), total=n())
+```
+
+
+#### **slice_max()** and **slice_min()** will give you only the max or min observation
+```{r}
+fisheries_tidy %>% 
+  filter(year == "2000") %>% 
+  group_by(country) %>% 
+  summarize(max_catch= max(catch, na.rm = TRUE)) %>% 
+  #arrange(desc(max_catch)) #we can either arrange the whole list, or just extract the max value with slice_max()
+  slice_max(max_catch)
+```
+
+Filtering a range of years
+```{r}
+fisheries_tidy %>% 
+  filter(between(year, 2008, 2012), asfis_species_name == "Cephalopoda") %>% 
+  group_by(country) %>% 
+  summarise(max_cephalopods = max(catch, na.rm = TRUE)) %>% 
+  arrange(desc(max_cephalopods)) %>% 
+  slice_max(max_cephalopods, n=5) # if you don't specify n, it will just give 1 value
+```
+
+
+## **`naniar`**
+`naniar` is a package that is built to manage NA's. Many of the functions it performs can also be performed using tidyverse functions, but it does provide some interesting alternatives.  
+
+`miss_var_summary` provides a nice, clean summary of NA's across the data frame.
+```{r}
+naniar::miss_var_summary(amniota_tidy)
+```
+
+Change values to NAs and then rerun missing variable summary.
+```{r}
+life_history %>% 
+  na_if("-999") %>% 
+  miss_var_summary()
+```

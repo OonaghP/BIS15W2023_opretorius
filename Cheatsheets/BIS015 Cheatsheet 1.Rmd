@@ -28,7 +28,12 @@ mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
 superhero_info <- readr::read_csv("data/heroes_information.csv", na = c("", "-99", "-")) # only remove the NAs here if you know the dataset!
 ```
 
-Other:
+Sometimes you need to check for footers etc and remove those:
+```{r message=FALSE, warning=FALSE}
+ecosphere <- read_csv("data/ecs21351-sup-0003-SupplementS1.csv", skip=2) %>% 
+  clean_names() %>%
+  slice(1:(n() - 18)) # this removes the footer
+```
 
 Check the structure of your data & class of variables:
 

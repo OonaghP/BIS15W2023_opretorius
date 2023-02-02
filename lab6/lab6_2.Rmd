@@ -85,12 +85,15 @@ penguins %>%
   summarize(n=n())
 ```
 
+## **Long data format** TIDY!
 You can also use `count()` across multiple variables.
 ```{r}
 penguins %>% 
   count(island, species, sort = T) # sort=T will arrange in descending order
 ```
 
+
+## **Wide data format** NOT TIDY!
 For counts, I often prefer `tabyl()`. Lots of options are supported in [tabyl](https://cran.r-project.org/web/packages/janitor/vignettes/tabyls.html)
 ```{r}
 penguins %>% 
