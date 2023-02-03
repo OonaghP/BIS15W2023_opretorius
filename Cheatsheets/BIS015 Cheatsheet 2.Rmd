@@ -19,6 +19,7 @@ Packages to load:
 library("tidyverse")
 library("janitor")
 library("skimr")
+library("naniar")
 ```
 
 ### Loading a dataset:
@@ -58,6 +59,13 @@ summary(msleep)
 msleep %>% 
   count(conservation, sort = TRUE) #gives tally of all NAs that R can see
 ```
+OR
+```{r}
+amphibio %>% 
+ summarize(number_nas = sum(is.na(.)))
+```
+
+
 ### **Replacing tings with NA**
 This can be very dangerous if you don't know the data well.
 ```{r}
