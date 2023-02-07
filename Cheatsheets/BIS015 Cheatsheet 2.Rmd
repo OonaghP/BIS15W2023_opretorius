@@ -279,3 +279,101 @@ life_history %>%
   na_if("-999") %>% 
   miss_var_summary()
 ```
+
+### **here()**
+The package here(), helps you to find your files in separate folders. Now you don't have to reset your working directory every time!
+```{r}
+here() #supposed to put you in the main directory
+```
+You just need to tell it where to find your data
+```{r}
+heartrate <- read_csv(here("data2", "heartrate.csv"))
+```
+
+### **pivot_longer()**
+transforms data into long form for use by R to make figures etc.
+```{r}
+heartrate %>% 
+pivot_longer(-patient, #patient will not pivot
+             names_to = "drug", #want column names to be moved to a new column
+             values_to = "heartrate" # values moved to
+             )
+```
+ Can combine with other functions:
+```{r}
+expenditures %>% 
+  pivot_longer(-expenditure, 
+               names_to = "year", 
+               values_to = "billion_dollars") %>% 
+  filter(expenditure == "Medical and Health") %>% 
+  arrange(-billion_dollars)
+```
+
+
+You can also specify a range of columns that you want to pivot.
+```{r}
+billboard2 <- 
+  billboard %>% 
+  pivot_longer(wk1:wk76, # specify a range of columns
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = TRUE #this will drop the NA's
+               )
+billboard2
+```
+
+
+Get other examples from 8.1
+
+
+
+
+### `names_sep` helps pull these apart, but we still have "exp" and "rep" to deal with.  
+```{r}
+qpcr_untidy %>% 
+  pivot_longer(
+    exp1_rep1:exp3_rep3,
+    names_to= c("experiment", "replicate"),
+    names_sep="_", # this can be a big problem if there is no separator
+    values_to="mRNA_expression"
+  )
+```
+### Splitting strings:
+```{r}
+length_data %>% 
+  transform(length = str_split(length, ";")) %>%
+  unnest(length)
+```
+
+
+
+### Separate()
+`separate()` needs to know which column you want to split, the names of the new columns, and what to look for in terms of breaks in the data.
+```{r}
+heartrate3 <- heartrate2 %>% 
+  separate(patient, into= c("patient", "sex"), sep = "_")
+```
+
+
+### Unite()
+is the opposite of separate(). Its syntax is straightforward. You only need to give a new column name and then list the columns to combine with a separation character.  Give it a try below by recombining patient and sex from `heartrate3`.  
+```{r}
+heartrate3 %>% 
+  unite(patient_sex, "patient", "sex", sep = "_")
+```
+
+
+## `pivot_wider()`
+The opposite of `pivot_longer()`. You use `pivot_wider()` when you have an observation scattered across multiple rows. In the example below, `cases` and `population` represent variable names not observations.  
+
+Rules:  
++ `pivot_wider`(names_from, values_from)  
++ `names_from` - Values in the `names_from` column will become new column names  
++ `values_from` - Cell values will be taken from the `values_from` column  
+
+### `pivot_wider()` with multiple variables  
+```{r}
+edu_level %>% 
+pivot_wider(names_from = (education_level), #new column names come from the education_level column
+                values_from = c(mean_income, n)) #values come from two separate columns
+```
