@@ -287,7 +287,7 @@ here() #supposed to put you in the main directory
 ```
 You just need to tell it where to find your data
 ```{r}
-heartrate <- read_csv(here("data2", "heartrate.csv"))
+sydney_beaches <-read_csv(here("lab8", "data", "sydneybeaches.csv")) %>% janitor::clean_names()
 ```
 
 ### **pivot_longer()**
