@@ -1,0 +1,14 @@
+---
+title: "Group Project Ideas"
+author: "Oonagh Pretorius"
+date: "2023-02-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+R for Epidemiologists - book
+
+NB to pick a dataset with a mix of continuous and categorical data

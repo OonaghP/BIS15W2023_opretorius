@@ -377,3 +377,6 @@ edu_level %>%
 pivot_wider(names_from = (education_level), #new column names come from the education_level column
                 values_from = c(mean_income, n)) #values come from two separate columns
 ```
+
+geom_bar() for counts
+geom_col() - for specifying x and y
