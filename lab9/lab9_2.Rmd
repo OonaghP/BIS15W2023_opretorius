@@ -101,10 +101,33 @@ homerange %>%
             median_log10.mass=median(log10.mass))
 ```
 
-Make this output more visual by making a plot...
+Make this output more visual by making a plot... **??CHECK**
 ```{r}
-
+homerange %>% 
+  group_by(class) %>% 
+  summarize(min_log10.mass=min(log10.mass),
+            max_log10.mass=max(log10.mass),
+            median_log10.mass=median(log10.mass)) %>% 
+  ggplot(aes(x = class))+
+  geom_boxplot(
+    aes(ymin = min_log10.mass, middle = median_log10.mass, ymax = max_log10.mass)
+  )
 ```
+
+```{r}
+homerange %>% 
+  group_by(class) %>% 
+  summarize(min_log10.mass=min(log10.mass),
+            max_log10.mass=max(log10.mass),
+            median_log10.mass=median(log10.mass)) %>% 
+  ggplot(aes(x = class))+
+  coord_flip()+
+  geom_boxplot(
+    aes(xmin = min_log10.mass, middle = median_log10.mass, xmax = max_log10.mass)
+  )
+```
+ggplot(diamonds, aes(carat, price)) +
+  geom_boxplot(aes(group = cut_width(carat, 0.25)))
 
 ## Practice
 1. There are more herbivores than carnivores in the homerange data, but how do their masses compare? Make a summary and boxplot that compares their masses. Use `log10.mass`.

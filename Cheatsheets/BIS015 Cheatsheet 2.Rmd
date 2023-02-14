@@ -20,6 +20,7 @@ library("tidyverse")
 library("janitor")
 library("skimr")
 library("naniar")
+library("here")
 ```
 
 ### Loading a dataset:
@@ -34,6 +35,16 @@ Sometimes you need to check for footers etc and remove those:
 ecosphere <- read_csv("data/ecs21351-sup-0003-SupplementS1.csv", skip=2) %>% 
   clean_names() %>%
   slice(1:(n() - 18)) # this removes the footer
+```
+
+### **here()**
+The package here(), helps you to find your files in separate folders. Now you don't have to reset your working directory every time!
+```{r}
+here() #supposed to put you in the main directory
+```
+You just need to tell it where to find your data
+```{r}
+sydney_beaches <-read_csv(here("lab8", "data", "sydneybeaches.csv")) %>% janitor::clean_names()
 ```
 
 Check the structure of your data & class of variables:
@@ -65,8 +76,16 @@ amphibio %>%
  summarize(number_nas = sum(is.na(.)))
 ```
 
+## **naniar**
+Use naniar to summarise missing values:
+```{r}
+glimpse(homerange)
+naniar::miss_var_summary(homerange)
+```
 
-### **Replacing tings with NA**
+
+
+### **Replacing things with NA**
 This can be very dangerous if you don't know the data well.
 ```{r}
 amniota_tidy <- amniota %>% 
@@ -180,7 +199,7 @@ tabyl(superhero_info, alignment)
 ```{r}
 penguins %>% 
   group_by(island, species) %>% #ID two categorical variables to group by
-  summarize(n_penguins=n(), .groups = 'keep') # if you don't put the .groups= "keep" it will gove you a small error. Remember for later when it becomes NB
+  summarize(n_penguins=n(), .groups = 'keep') # if you don't put the .groups= "keep" it will give you a small error. Remember for later when it becomes NB
 ```
 
 #### **`summarize()`**
@@ -214,6 +233,11 @@ penguins %>%
 superhero_powers %>% 
   filter(hero_names == "Angel") %>%
   select_if(all_vars(.=="TRUE"))
+```
+
+```{r}
+colleges %>% 
+  filter_all(any_vars(str_detect(., pattern = "University of California")))
 ```
 
 #### **count()**
@@ -280,15 +304,6 @@ life_history %>%
   miss_var_summary()
 ```
 
-### **here()**
-The package here(), helps you to find your files in separate folders. Now you don't have to reset your working directory every time!
-```{r}
-here() #supposed to put you in the main directory
-```
-You just need to tell it where to find your data
-```{r}
-sydney_beaches <-read_csv(here("lab8", "data", "sydneybeaches.csv")) %>% janitor::clean_names()
-```
 
 ### **pivot_longer()**
 transforms data into long form for use by R to make figures etc.
@@ -377,6 +392,12 @@ edu_level %>%
 pivot_wider(names_from = (education_level), #new column names come from the education_level column
                 values_from = c(mean_income, n)) #values come from two separate columns
 ```
+
+========================================================================================
+========================================================================================
+## **PLOTTING**
+========================================================================================
+========================================================================================
 
 geom_bar() for counts
 geom_col() - for specifying x and y
