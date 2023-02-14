@@ -401,3 +401,18 @@ pivot_wider(names_from = (education_level), #new column names come from the educ
 
 geom_bar() for counts
 geom_col() - for specifying x and y
+
+
+```{r}
+options(scipen =999) #cancels scientific notation for the session
+```
+
+```{r}
+life_history %>% 
+  group_by(order) %>% 
+  summarize(mean_mass=mean(mass, na.rm=T)) %>% 
+  ggplot(aes(x=reorder(order, mean_mass), y=mean_mass))+ #organises by descending mass
+  geom_col()+
+  coord_flip()+
+  scale_y_log10() #changes the y axis to log 10 scale
+```
