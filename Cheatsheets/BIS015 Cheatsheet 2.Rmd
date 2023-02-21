@@ -4,7 +4,8 @@ author: "Oonagh Pretorius"
 date: "`r Sys.Date()`"
 output: html_document
 ---
-
+Midterm 2: will be asked to use a consistent theme and palette!
+NB faceting!
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
