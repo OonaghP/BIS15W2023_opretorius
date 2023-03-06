@@ -187,9 +187,9 @@ msleep %>%
 ```
 
 2. What does `NA` mean? How are NA's being treated by the summarize function?
-```{r}
+
 NA = Not available
-```
+
 
 3. Try running the code again, but this time add `na.rm=TRUE`. What is the problem with Cetacea? Compare this to Carnivora. 
 ```{r}
