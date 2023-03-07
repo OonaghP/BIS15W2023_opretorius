@@ -125,7 +125,7 @@ ggmap(map2) #this is a free map, some you have to pay for
 ```{r}
 ggmap(map2) + 
   geom_point(data = grizzly, aes(longitude, latitude)) +
-  labs(x= "Longitude", y= "Latitude", title="Grizzly Bear Locations", points())
+  labs(x="Longitude", y="Latitude", title="Grizzly Bear Locations", points())
 ```
 
 ## Wrap-up  
